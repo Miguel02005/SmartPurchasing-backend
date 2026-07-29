@@ -1,8 +1,18 @@
-import { Body, Controller, Post, HttpCode, HttpStatus } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  Get,
+  HttpCode,
+  HttpStatus,
+  UseGuards,
+  Request,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginVendorDto } from './dto/login.dto';
 import { VendorEntity } from './entities/vendor.entity';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
+import { JwtAuthGuard } from './jwt-auth.guard';
 
 @ApiTags('vendors')
 @Controller('vendors')
@@ -15,5 +25,15 @@ export class VendorsController {
     @Body() loginDto: LoginVendorDto,
   ): Promise<{ accessToken: string; vendor: Omit<VendorEntity, 'password'> }> {
     return this.authService.login(loginDto);
+  }
+
+  // Ruta de ejemplo protegida: solo responde si el token es válido
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Get('perfil')
+  getProfile(
+    @Request() req: { user: { businessEntityId: number; email: string } },
+  ) {
+    return req.user;
   }
 }
