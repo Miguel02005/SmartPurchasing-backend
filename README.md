@@ -96,4 +96,21 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+
 # SmartPurchasing-backend
+
+## 📄 Documentación de la API
+
+Este proyecto expone su documentación interactiva con **Swagger (OpenAPI 3.0)**.
+
+Con el proyecto corriendo (`docker compose up`), accede a:
+
+### 👉 [http://localhost:3000/api](http://localhost:3000/api)
+
+Desde ahí puedes:
+
+- Ver todos los endpoints disponibles, agrupados por módulo.
+- Probar peticiones directamente (`Try it out` → `Execute`), sin necesitar Postman.
+- Autenticarte con el botón **Authorize** 🔒 pegando el `accessToken` obtenido en `/vendors/login`, para probar rutas protegidas con JWT.
+
+> Nota: si cambiaste el puerto en tu `docker-compose.yml` o `.env`, reemplaza `3000` por el que corresponda.

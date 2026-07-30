@@ -1,4 +1,4 @@
-version: "3.8"
+version: '3.8'
 
 services:
   mysql:
@@ -11,7 +11,7 @@ services:
       MYSQL_USER: user_crud
       MYSQL_PASSWORD: root
     ports:
-      - "3307:3306"
+      - '3307:3306'
     volumes:
       - mysql_data:/var/lib/mysql
 
@@ -20,7 +20,7 @@ services:
     container_name: nest_app
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      - '3000:3000'
     depends_on:
       - mysql
     environment:
@@ -29,6 +29,7 @@ services:
       DB_USER: user_crud
       DB_PASSWORD: root
       DB_NAME: db_crud
+      JWT_SECRET: ${JWT_SECRET}
 
 volumes:
   mysql_data:
