@@ -8,14 +8,18 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
-        type: 'mysql',
-        host: config.get<string>('DB_HOST', 'mysql'),
-        port: parseInt(config.get<string>('DB_PORT', '3306'), 10),
-        username: config.get<string>('DB_USER', 'user_crud'),
-        password: config.get<string>('DB_PASSWORD', 'root'),
-        database: config.get<string>('DB_NAME', 'db_crud'),
+        type: 'mssql',
+        host: config.get<string>('DB_HOST', 'sqlserver'),
+        port: parseInt(config.get<string>('DB_PORT', '1433'), 10),
+        username: config.get<string>('DB_USER', 'sa'),
+        password: config.get<string>('DB_PASSWORD', ''),
+        database: config.get<string>('DB_NAME', 'AdventureWorks'),
+        options: {
+          encrypt: false, // true solo si te conectas a Azure SQL
+          trustServerCertificate: true, // necesario para desarrollo local sin certificado válido
+        },
         entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-        synchronize: config.get<string>('NODE_ENV') !== 'production',
+        synchronize: false, // NUNCA true contra una base real con datos reales de AdventureWorks
         autoLoadEntities: true,
       }),
     }),

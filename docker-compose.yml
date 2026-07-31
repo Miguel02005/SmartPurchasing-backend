@@ -1,19 +1,17 @@
-version: '3.8'
-
 services:
-  mysql:
-    image: mysql:8.0
-    container_name: mysql_db
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2025-latest
+    container_name: sqlserver_db
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: db_crud
-      MYSQL_USER: user_crud
-      MYSQL_PASSWORD: root
+      ACCEPT_EULA: 'Y'
+      MSSQL_SA_PASSWORD: 'TuPassword123!'
+      MSSQL_PID: 'Evaluation'
     ports:
-      - '3307:3306'
+      - '1433:1433'
     volumes:
-      - mysql_data:/var/lib/mysql
+      - sqlserver_data:/var/opt/mssql
+      - ./database/backup:/var/opt/mssql/backup
 
   nest-app:
     build: .
@@ -22,14 +20,14 @@ services:
     ports:
       - '3000:3000'
     depends_on:
-      - mysql
+      - sqlserver
     environment:
-      DB_HOST: mysql
-      DB_PORT: 3306
-      DB_USER: user_crud
-      DB_PASSWORD: root
-      DB_NAME: db_crud
+      DB_HOST: sqlserver
+      DB_PORT: 1433
+      DB_USER: sa
+      DB_PASSWORD: 'TuPassword123!'
+      DB_NAME: AdventureWorks
       JWT_SECRET: ${JWT_SECRET}
 
 volumes:
-  mysql_data:
+  sqlserver_data:
