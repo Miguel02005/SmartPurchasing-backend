@@ -12,6 +12,8 @@ services:
     volumes:
       - sqlserver_data:/var/opt/mssql
       - ./database/backup:/var/opt/mssql/backup
+      - ./database/init:/usr/src/app/init
+    entrypoint: ['/bin/bash', '/usr/src/app/init/entrypoint.sh']
 
   nest-app:
     build: .
