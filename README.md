@@ -25,6 +25,75 @@
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
+## 📄 Documentación de la API
+
+Este proyecto expone su documentación interactiva con **Swagger (OpenAPI 3.0)**.
+
+Con el proyecto corriendo (`docker compose up`), accede a:
+
+### 👉 [http://localhost:3000/api](http://localhost:3000/api)
+
+Desde ahí puedes:
+
+- Ver todos los endpoints disponibles, agrupados por módulo.
+- Probar peticiones directamente (`Try it out` → `Execute`), sin necesitar Postman.
+- Autenticarte con el botón **Authorize** 🔒 pegando el `accessToken` obtenido en `/vendors/login`, para probar rutas protegidas con JWT.
+
+> Nota: si cambiaste el puerto en tu `docker-compose.yml` o `.env`, reemplaza `3000` por el que corresponda.
+
+## 🚀 Cómo levantar el proyecto (Docker)
+
+Este proyecto usa **SQL Server 2025** con la base de datos real de **AdventureWorks** (esquema `Purchasing`), corriendo en Docker junto con la app de NestJS.
+
+### Requisitos
+
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) instalado y corriendo.
+- El archivo `database/backup/AdventureWorks2025.bak` (ya viene incluido en el repo).
+
+### Pasos
+
+1. **Clona el repo** (el `.bak` ya viene incluido):
+
+   ```bash
+   git clone <url-del-repo>
+   cd GerenciaProyectos
+   ```
+
+2. **Crea tu archivo `.env`** a partir del ejemplo:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+   Abre `.env` y genera tu propio `JWT_SECRET`:
+
+   ```bash
+   node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
+   ```
+
+   Pega el resultado en `JWT_SECRET=` dentro de tu `.env`.
+
+3. **Levanta todo con Docker:**
+
+   ```bash
+   docker compose up --build
+   ```
+
+   La primera vez, esto va a:
+   - Descargar las imágenes de SQL Server 2025 y Node.
+   - Restaurar automáticamente la base de datos AdventureWorks desde el `.bak`.
+   - Agregar las columnas `Email`/`Password` a `Purchasing.Vendor` (necesarias para el login).
+   - Construir y levantar la API de NestJS.
+
+   Todo esto es **automático** — no necesitas correr ningún comando de SQL a mano. Puede tardar 1-2 minutos la primera vez.
+
+4. **Verifica que todo esté arriba:** entra a `http://localhost:3000/api` (Swagger) — si carga, todo quedó bien.
+
+### Notas
+
+- Los datos de la base viven en un volumen de Docker (`sqlserver_data`) — si corres `docker compose down -v`, se borran y la próxima vez que levantes el proyecto, se restaura todo desde cero automáticamente (tarda unos segundos más esa vez).
+- La tabla `Purchasing.Vendor` viene con 104 vendors reales de ejemplo (sin email/password) más los que registres tú desde la API.
+
 ## Project setup
 
 ```bash
@@ -98,19 +167,3 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
 
 # SmartPurchasing-backend
-
-## 📄 Documentación de la API
-
-Este proyecto expone su documentación interactiva con **Swagger (OpenAPI 3.0)**.
-
-Con el proyecto corriendo (`docker compose up`), accede a:
-
-### 👉 [http://localhost:3000/api](http://localhost:3000/api)
-
-Desde ahí puedes:
-
-- Ver todos los endpoints disponibles, agrupados por módulo.
-- Probar peticiones directamente (`Try it out` → `Execute`), sin necesitar Postman.
-- Autenticarte con el botón **Authorize** 🔒 pegando el `accessToken` obtenido en `/vendors/login`, para probar rutas protegidas con JWT.
-
-> Nota: si cambiaste el puerto en tu `docker-compose.yml` o `.env`, reemplaza `3000` por el que corresponda.
