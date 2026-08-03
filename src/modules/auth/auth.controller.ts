@@ -11,6 +11,7 @@ import {
 import { AuthService } from './auth.service';
 import { LoginVendorDto } from './dto/login.dto';
 import { VendorEntity } from './entities/vendor.entity';
+import { RegisterVendorDto } from './dto/register.dto';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from './jwt-auth.guard';
 
@@ -25,6 +26,14 @@ export class VendorsController {
     @Body() loginDto: LoginVendorDto,
   ): Promise<{ accessToken: string; vendor: Omit<VendorEntity, 'password'> }> {
     return this.authService.login(loginDto);
+  }
+
+  @Post('register')
+  @HttpCode(HttpStatus.CREATED)
+  register(
+    @Body() registerDto: RegisterVendorDto,
+  ): Promise<{ accessToken: string; vendor: Omit<VendorEntity, 'password'> }> {
+    return this.authService.register(registerDto);
   }
 
   // Ruta de ejemplo protegida: solo responde si el token es válido
