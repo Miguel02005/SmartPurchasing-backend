@@ -1,8 +1,14 @@
-import { Entity, Column, PrimaryColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryColumn,
+  UpdateDateColumn,
+  OneToMany,
+} from 'typeorm';
+import { ProductVendorEntity } from '../../product/entities/product.entity';
 
 @Entity({ name: 'Vendor', schema: 'Purchasing' })
 export class VendorEntity {
-  // OJO: ya no es @PrimaryGeneratedColumn (ver explicación abajo)
   @PrimaryColumn({ name: 'BusinessEntityID' })
   businessEntityId!: number;
 
@@ -39,4 +45,7 @@ export class VendorEntity {
 
   @UpdateDateColumn({ name: 'ModifiedDate' })
   modifiedDate!: Date;
+
+  @OneToMany(() => ProductVendorEntity, (productVendor) => productVendor.vendor)
+  productVendors!: ProductVendorEntity[];
 }
