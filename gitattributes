@@ -1,0 +1,3 @@
+# Los scripts de shell SIEMPRE deben usar LF (Unix), incluso si se editan en Windows.
+# Sin esto, Git o el editor pueden guardar con CRLF y romper el script dentro de contenedores Linux.
+*.sh text eol=lf
