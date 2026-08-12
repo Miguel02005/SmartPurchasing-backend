@@ -66,7 +66,6 @@ export class ProductService {
     dto: UpdateProductVendorDto,
   ): Promise<ProductVendorEntity> {
     const productVendor = await this.findOneOrFail(productId, businessEntityId);
-
     // dto.lastReceiptDate llega como string (así viaja por HTTP/JSON),
     // pero la entidad espera un objeto Date real -> hay que convertirlo antes de merge()
     const { lastReceiptDate, ...rest } = dto;
