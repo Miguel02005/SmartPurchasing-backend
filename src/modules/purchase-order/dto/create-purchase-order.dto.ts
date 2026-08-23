@@ -5,7 +5,12 @@ import {
   IsOptional,
   IsDateString,
   Min,
+  IsArray,
+  ArrayNotEmpty,
+  ValidateNested,
 } from 'class-validator';
+import { Type } from 'class-transformer';
+import { CreatePurchaseOrderDetailDto } from './create-purchase-order-detail.dto';
 
 export class CreatePurchaseOrderDto {
   @ApiProperty({ description: 'ID del método de envío', example: 1 })
@@ -42,4 +47,17 @@ export class CreatePurchaseOrderDto {
   @IsNumber()
   @Min(0)
   freight?: number;
+
+  @ApiProperty({
+    type: [CreatePurchaseOrderDetailDto],
+    required: false,
+    description:
+      'Líneas de detalle de la orden. Se crean junto con la cabecera en una sola transacción',
+  })
+  @IsOptional()
+  @IsArray()
+  @ArrayNotEmpty()
+  @ValidateNested({ each: true })
+  @Type(() => CreatePurchaseOrderDetailDto)
+  details?: CreatePurchaseOrderDetailDto[];
 }

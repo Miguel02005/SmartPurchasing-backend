@@ -4,9 +4,11 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
   ManyToOne,
+  OneToMany,
   JoinColumn,
 } from 'typeorm';
 import { VendorEntity } from '../../auth/entities/vendor.entity';
+import { PurchaseOrderDetailEntity } from './purchase-order-detail.entity';
 
 @Entity({ name: 'PurchaseOrderHeader', schema: 'Purchasing' })
 export class PurchaseOrderHeaderEntity {
@@ -25,6 +27,9 @@ export class PurchaseOrderHeaderEntity {
   @ManyToOne(() => VendorEntity)
   @JoinColumn({ name: 'VendorID' })
   vendor!: VendorEntity;
+
+  @OneToMany(() => PurchaseOrderDetailEntity, (detail) => detail.purchaseOrder)
+  details!: PurchaseOrderDetailEntity[];
 
   @Column({ name: 'RevisionNumber', type: 'tinyint', default: 0 })
   revisionNumber!: number;
