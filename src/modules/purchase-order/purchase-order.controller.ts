@@ -3,17 +3,20 @@ import {
   Get,
   Post,
   Patch,
+  Delete,
   Body,
   Param,
   ParseIntPipe,
   UseGuards,
   Request,
   ForbiddenException,
+  HttpCode,
 } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { PurchaseOrderService } from './purchase-order.service';
 import { CreatePurchaseOrderDto } from './dto/create-purchase-order.dto';
 import { UpdatePurchaseOrderDto } from './dto/update-purchase-order.dto';
+import { UpdatePurchaseOrderDetailDto } from './dto/update-purchase-order-detail.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 interface AuthenticatedRequest {
@@ -77,6 +80,39 @@ export class PurchaseOrderController {
       purchaseOrderId,
       req.user.businessEntityId,
       dto,
+    );
+  }
+
+  @Patch(':purchaseOrderId/details/:purchaseOrderDetailId')
+  async updateDetail(
+    @Request() req: AuthenticatedRequest,
+    @Param('purchaseOrderId', ParseIntPipe) purchaseOrderId: number,
+    @Param('purchaseOrderDetailId', ParseIntPipe)
+    purchaseOrderDetailId: number,
+    @Body() dto: UpdatePurchaseOrderDetailDto,
+  ) {
+    await this.assertOwnership(purchaseOrderId, req.user.businessEntityId);
+    return this.purchaseOrderService.updateDetail(
+      purchaseOrderId,
+      req.user.businessEntityId,
+      purchaseOrderDetailId,
+      dto,
+    );
+  }
+
+  @Delete(':purchaseOrderId/details/:purchaseOrderDetailId')
+  @HttpCode(204)
+  async removeDetail(
+    @Request() req: AuthenticatedRequest,
+    @Param('purchaseOrderId', ParseIntPipe) purchaseOrderId: number,
+    @Param('purchaseOrderDetailId', ParseIntPipe)
+    purchaseOrderDetailId: number,
+  ) {
+    await this.assertOwnership(purchaseOrderId, req.user.businessEntityId);
+    await this.purchaseOrderService.removeDetail(
+      purchaseOrderId,
+      req.user.businessEntityId,
+      purchaseOrderDetailId,
     );
   }
 }
