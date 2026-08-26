@@ -28,6 +28,7 @@ export class PurchaseOrderService {
   ): Promise<PurchaseOrderHeaderEntity[]> {
     return this.purchaseOrderRepository.find({
       where: { businessEntityId },
+      relations: { details: true },
       order: { orderDate: 'DESC' },
     });
   }
