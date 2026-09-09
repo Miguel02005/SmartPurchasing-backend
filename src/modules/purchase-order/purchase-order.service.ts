@@ -10,6 +10,7 @@ import { Repository, DataSource } from 'typeorm';
 import { CreatePurchaseOrderDto } from './dto/create-purchase-order.dto';
 import { UpdatePurchaseOrderDto } from './dto/update-purchase-order.dto';
 import { UpdatePurchaseOrderDetailDto } from './dto/update-purchase-order-detail.dto';
+import { ShipMethodService } from '../ship_method/ship-method.service';
 
 const DEFAULT_EMPLOYEE_ID = 1;
 
@@ -21,6 +22,7 @@ export class PurchaseOrderService {
     @InjectRepository(PurchaseOrderDetailEntity)
     private readonly purchaseOrderDetailRepository: Repository<PurchaseOrderDetailEntity>,
     private readonly dataSource: DataSource,
+    private readonly shipMethodService: ShipMethodService,
   ) {}
 
   async findByVendor(
@@ -67,10 +69,20 @@ export class PurchaseOrderService {
     return purchaseOrder;
   }
 
+  private async validateShipMethod(shipMethodId: number): Promise<void> {
+    const exists = await this.shipMethodService.existsById(shipMethodId);
+    if (!exists) {
+      throw new BadRequestException(
+        `El método de envío con ID ${shipMethodId} no es válido`,
+      );
+    }
+  }
+
   async create(
     dto: CreatePurchaseOrderDto,
     businessEntityId: number,
   ): Promise<PurchaseOrderHeaderEntity> {
+    await this.validateShipMethod(dto.shipMethodId);
     const { details, ...headerDto } = dto;
 
     const calculatedSubTotal =
@@ -84,6 +96,7 @@ export class PurchaseOrderService {
 
     const purchaseOrder = this.purchaseOrderRepository.create({
       ...headerDto,
+      shipMethod: { shipMethodId: dto.shipMethodId },
       businessEntityId,
       employeeId: DEFAULT_EMPLOYEE_ID,
       orderDate: new Date(headerDto.orderDate),
@@ -127,6 +140,10 @@ export class PurchaseOrderService {
     businessEntityId: number,
     dto: UpdatePurchaseOrderDto,
   ): Promise<PurchaseOrderHeaderEntity> {
+    if (dto.shipMethodId) {
+      await this.validateShipMethod(dto.shipMethodId);
+    }
+
     const purchaseOrder = await this.findOneOrFail(
       purchaseOrderId,
       businessEntityId,

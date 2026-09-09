@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  ConflictException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
@@ -36,9 +40,9 @@ export class AuthService {
     if (existingVendor) {
       throw new ConflictException('El email ya está registrado');
     }
- 
+
     const hashedPassword = await bcrypt.hash(dto.password, 10);
- 
+
     // BusinessEntityID no es autoincremental en la tabla real de AdventureWorks,
     // así que calculamos el siguiente disponible. Si en el futuro insertas primero
     // en Person.BusinessEntity, usa ese ID en su lugar.
@@ -47,7 +51,7 @@ export class AuthService {
       .select('MAX(vendor.businessEntityId)', 'max')
       .getRawOne<{ max: number | null }>()) ?? { max: 0 };
     const nextId = (max ?? 0) + 1;
- 
+
     const vendor = this.vendorsRepository.create({
       businessEntityId: nextId,
       accountNumber: dto.accountNumber,
@@ -59,15 +63,15 @@ export class AuthService {
       email: dto.email,
       password: hashedPassword,
     });
- 
+
     const savedVendor = await this.vendorsRepository.save(vendor);
- 
+
     const payload = {
       sub: savedVendor.businessEntityId,
       email: savedVendor.email,
     };
     const accessToken = await this.jwtService.signAsync(payload);
- 
+
     const { password, ...safeVendor } = savedVendor;
     return { accessToken, vendor: safeVendor };
   }
