@@ -15,6 +15,8 @@ import { ShipMethodEntity } from 'src/modules/ship_method/entities/Ship-method.e
 export class PurchaseOrderHeaderEntity {
   @PrimaryGeneratedColumn({ name: 'PurchaseOrderID' })
   purchaseOrderId!: number;
+  @Column({ name: 'ShipMethodID' })
+  shipMethodId!: number;
 
   @ManyToOne(() => ShipMethodEntity, (shipMethod) => shipMethod.purchaseOrders)
   @JoinColumn({ name: 'ShipMethodID' })

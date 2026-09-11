@@ -30,7 +30,7 @@ export class PurchaseOrderService {
   ): Promise<PurchaseOrderHeaderEntity[]> {
     return this.purchaseOrderRepository.find({
       where: { businessEntityId },
-      relations: { details: true },
+      relations: { details: true, shipMethod: true },
       order: { orderDate: 'DESC' },
     });
   }
@@ -58,7 +58,7 @@ export class PurchaseOrderService {
   ): Promise<PurchaseOrderHeaderEntity> {
     const purchaseOrder = await this.purchaseOrderRepository.findOne({
       where: { purchaseOrderId, businessEntityId },
-      relations: { details: true },
+      relations: { details: true, shipMethod: true },
       order: { details: { purchaseOrderDetailId: 'ASC' } },
     });
     if (!purchaseOrder) {
