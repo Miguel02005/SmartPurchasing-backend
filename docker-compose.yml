@@ -1,45 +1,16 @@
 services:
-  sqlserver:
-    image: mcr.microsoft.com/mssql/server:2025-latest
-    container_name: sqlserver_db
-    restart: unless-stopped
-    environment:
-      ACCEPT_EULA: 'Y'
-      MSSQL_SA_PASSWORD: 'TuPassword123!'
-      MSSQL_PID: 'Evaluation'
-    ports:
-      - '1433:1433'
-    volumes:
-      - sqlserver_data:/var/opt/mssql
-      - ./database/backup:/var/opt/mssql/backup
-      - ./database/init:/usr/src/app/init
-    entrypoint: ['/bin/bash', '/usr/src/app/init/entrypoint.sh']
-    healthcheck:
-      test:
-        [
-          'CMD-SHELL',
-          '/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "$$MSSQL_SA_PASSWORD" -C -Q "SELECT 1 FROM sys.databases WHERE name=''AdventureWorks'' AND state_desc=''ONLINE''" -h -1 | grep -q 1',
-        ]
-      interval: 5s
-      timeout: 5s
-      retries: 20
-      start_period: 15s
-
   nest-app:
     build: .
     container_name: nest_app
     restart: unless-stopped
     ports:
       - '3000:3000'
-    depends_on:
-      - sqlserver
     environment:
-      DB_HOST: sqlserver
+      DB_HOST: sebastian-sql-server-2026.database.windows.net
       DB_PORT: 1433
-      DB_USER: sa
+      DB_USER: sqladmin
       DB_PASSWORD: 'TuPassword123!'
-      DB_NAME: AdventureWorks
+      DB_NAME: AdventureWorks2
+      DB_ENCRYPT: 'true'
+      DB_TRUST_CERT: 'false'
       JWT_SECRET: ${JWT_SECRET}
-
-volumes:
-  sqlserver_data:

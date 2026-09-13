@@ -15,8 +15,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         password: config.get<string>('DB_PASSWORD', ''),
         database: config.get<string>('DB_NAME', 'AdventureWorks'),
         options: {
-          encrypt: false, // true solo si te conectas a Azure SQL
-          trustServerCertificate: true, // necesario para desarrollo local sin certificado válido
+          encrypt: config.get<string>('DB_ENCRYPT', 'false') === 'true',
+          trustServerCertificate:
+            config.get<string>('DB_TRUST_CERT', 'true') === 'true',
         },
         entities: [__dirname + '/../**/*.entity{.ts,.js}'],
         synchronize: false, // NUNCA true contra una base real con datos reales de AdventureWorks
