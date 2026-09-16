@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 import { VendorEntity } from '../../auth/entities/vendor.entity';
 import { PurchaseOrderDetailEntity } from './purchase-order-detail.entity';
-import { ShipMethodEntity } from 'src/modules/ship_method/entities/Ship-method.entity';
+import { ShipMethodEntity } from '../../ship_method/entities/Ship-method.entity';
 
 @Entity({ name: 'PurchaseOrderHeader', schema: 'Purchasing' })
 export class PurchaseOrderHeaderEntity {
