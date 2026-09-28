@@ -1,34 +1,16 @@
-version: "3.8"
-
 services:
-  mysql:
-    image: mysql:8.0
-    container_name: mysql_db
-    restart: unless-stopped
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: db_crud
-      MYSQL_USER: user_crud
-      MYSQL_PASSWORD: root
-    ports:
-      - "3307:3306"
-    volumes:
-      - mysql_data:/var/lib/mysql
-
   nest-app:
     build: .
     container_name: nest_app
     restart: unless-stopped
     ports:
-      - "3000:3000"
-    depends_on:
-      - mysql
+      - '3000:3000'
     environment:
-      DB_HOST: mysql
-      DB_PORT: 3306
-      DB_USER: user_crud
-      DB_PASSWORD: root
-      DB_NAME: db_crud
-
-volumes:
-  mysql_data:
+      DB_HOST: sebastian-sql-server-2026.database.windows.net
+      DB_PORT: 1433
+      DB_USER: sqladmin
+      DB_PASSWORD: 'TuPassword123!'
+      DB_NAME: AdventureWorks2
+      DB_ENCRYPT: 'true'
+      DB_TRUST_CERT: 'false'
+      JWT_SECRET: ${JWT_SECRET}
