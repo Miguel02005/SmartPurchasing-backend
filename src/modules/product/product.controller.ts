@@ -13,10 +13,17 @@ import {
   Request,
   ForbiddenException,
 } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiBearerAuth,
+  ApiOkResponse,
+  ApiNotFoundResponse,
+  ApiBadRequestResponse,
+} from '@nestjs/swagger';
 import { ProductService } from './product.service';
 import { CreateProductVendorDto } from './dto/create-product.dto';
 import { UpdateProductVendorDto } from './dto/update-product.dto';
+import { ProductVendorResponseDto } from './dto/product-vendor-response.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 interface AuthenticatedRequest {
@@ -30,8 +37,25 @@ interface AuthenticatedRequest {
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
   @Get('mine')
+  @ApiOkResponse({ type: [ProductVendorResponseDto] })
   findMine(@Request() req: AuthenticatedRequest) {
     return this.productService.findByVendor(req.user.businessEntityId);
+  }
+
+  // Debe declararse despues de @Get('mine'): Nest resuelve las rutas en orden de
+  // declaracion, y ParseIntPipe rechazaria /products/mine como un id no numerico.
+  @Get(':productId')
+  @ApiOkResponse({ type: ProductVendorResponseDto })
+  @ApiNotFoundResponse({
+    description:
+      'El productId no existe o no esta asociado al vendor autenticado',
+  })
+  @ApiBadRequestResponse({ description: 'El productId no es un numero' })
+  findOne(
+    @Param('productId', ParseIntPipe) productId: number,
+    @Request() req: AuthenticatedRequest,
+  ) {
+    return this.productService.findOne(productId, req.user.businessEntityId);
   }
   @Post('create')
   create(

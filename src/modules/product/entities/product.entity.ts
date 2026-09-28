@@ -7,6 +7,7 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { VendorEntity } from '../../auth/entities/vendor.entity';
+import { ProductEntity } from './production-product.entity';
 
 @Entity({ name: 'ProductVendor', schema: 'Purchasing' })
 export class ProductVendorEntity {
@@ -19,6 +20,12 @@ export class ProductVendorEntity {
   @ManyToOne(() => VendorEntity)
   @JoinColumn({ name: 'BusinessEntityID' })
   vendor!: VendorEntity;
+
+  // Comparte la columna ProductID con la PrimaryColumn de arriba: TypeORM
+  // deduplica la columna y el JOIN queda en ON p."ProductID" = pv."ProductID".
+  @ManyToOne(() => ProductEntity, (product) => product.productVendors)
+  @JoinColumn({ name: 'ProductID' })
+  product!: ProductEntity;
 
   @Column({ name: 'AverageLeadTime', type: 'int' })
   averageLeadTime!: number;
