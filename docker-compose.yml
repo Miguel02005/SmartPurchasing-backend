@@ -9,7 +9,7 @@ services:
       DB_HOST: sebastian-sql-server-2026.database.windows.net
       DB_PORT: 1433
       DB_USER: sqladmin
-      DB_PASSWORD: 'Sebas-servidor-27-sirve!'
+      DB_PASSWORD: ${DB_PASSWORD}
       DB_NAME: AdventureWorks2
       DB_ENCRYPT: 'true'
       DB_TRUST_CERT: 'false'
