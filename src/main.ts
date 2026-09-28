@@ -14,7 +14,10 @@ async function bootstrap() {
   );
 
   app.enableCors({
-    origin: process.env.FRONTEND_URL ?? 'http://localhost:5173',
+    origin: [
+      process.env.FRONTEND_URL ?? 'http://localhost:5173',
+      'http://172.30.32.1:5173',
+    ],
     credentials: true, // permite enviar cookies / headers de autorización
   });
   const config = new DocumentBuilder()
@@ -27,6 +30,6 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document); // visible en http://localhost:3000/api
 
-  await app.listen(process.env.PORT ?? 3000);
+  await app.listen(process.env.PORT ?? 3000, '0.0.0.0');
 }
 void bootstrap();
